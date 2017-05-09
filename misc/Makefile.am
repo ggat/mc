@@ -25,11 +25,8 @@ LIBFILES_CONST = \
 	mc.default.keymap \
 	mc.emacs.keymap
 
-
 LIBFILES_SCRIPT = \
 	edit.indent.rc
-
-CLEANFILES = $(SCRIPTS_OUT)
 
 cfgdir = $(sysconfdir)/@PACKAGE@
 cfg_DATA = \
@@ -44,10 +41,13 @@ iconsdir = $(datadir)/icons/hicolor/scalable/apps
 icons_DATA = \
 	mc.svg
 
+@INTLTOOL_DESKTOP_RULE@
+
 desktopdir = $(datadir)/applications
-desktop_DATA = \
-	mc.desktop \
-	mcedit.desktop
+desktop_in_files = \
+	mc.desktop.in \
+	mcedit.desktop.in
+desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
 # Files processed by configure don't need to be here
 EXTRA_DIST = \
@@ -62,6 +62,11 @@ EXTRA_DIST = \
 if !CHARSET
 EXTRA_DIST += mc.charsets
 endif
+
+CLEANFILES = \
+	$(SCRIPTS_OUT) \
+	$(desktop_in_files) \
+	$(desktop_DATA)
 
 install-data-hook:
 	cd $(DESTDIR)$(cfgdir) && rm -f mc.keymap && $(LN_S) mc.default.keymap mc.keymap
